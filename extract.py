@@ -113,14 +113,6 @@ def _find_svs(tokens):
     return svs
 
 
-def _get_mods_from_prepositions(deps, tokens, visited):
-    mods = []
-    for dep in deps:
-        if dep.pos_ == "ADP" and dep.dep_ == "prep":
-            mods.extend(expand(dep, tokens, visited))
-    return mods
-
-
 # get grammatical objects for a given set of dependencies (including passive sentences)
 def _get_objs_from_prepositions(deps, is_pas):
     objs = []
@@ -267,10 +259,10 @@ def printDeps(toks):
 
 # expand an obj / subj np using its chunk
 def expand(item, tokens, visited):
-    if item.lower_ == 'that':
-        temp_item = _get_that_resolution(tokens)
-        if temp_item is not None:
-            item = temp_item
+    # if item.lower_ == 'that':
+    #     temp_item = _get_that_resolution(tokens)
+    #     if temp_item is not None:
+    #         item = temp_item
 
     parts = []
 
@@ -488,6 +480,23 @@ def findSMs(tokens):
     return list(sms)
 
 
+def _get_mods_from_prepositions(deps, tokens, visited):
+    mods = []
+    for dep in deps:
+        if dep.pos_ == "ADP" and dep.dep_ == "prep":
+            mods.extend(expand(dep, tokens, visited))
+    return mods
+
+
+def _get_mods_from_clauses(deps, tokens, visited):
+    mods = []
+    for dep in deps:
+        for item in dep.lefts:
+            if item.pos_ == "SCONJ" and (item.lower_ == 'that' or item.lower_ == 'if'):
+                mods.extend(expand(dep, tokens, visited))
+    return mods
+
+
 # find subjects and their modifiers to create SMs
 def findVMs(tokens):
     vms = []
@@ -495,8 +504,11 @@ def findVMs(tokens):
     for v in verbs:
         visited = set()
         mods = _get_mods_from_prepositions(v.rights, tokens, visited)
+        _mods = _get_mods_from_clauses(v.rights, tokens, visited)
         if len(mods) > 0:
             vms.append((v.lower_, to_str(mods)))
+        elif len(_mods) > 0:
+            vms.append((v.lower_, to_str(_mods)))
         else:
             vms.append((v.lower_, ''))
 
