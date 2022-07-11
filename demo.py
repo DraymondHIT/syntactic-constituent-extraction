@@ -1,4 +1,4 @@
-from extract import findSVOs, findSMs, nlp, get_special_phrases
+from extract import findSVOs, findSMs, findVMs, nlp, get_special_phrases
 
 with open("sample.txt", "r") as f:
     corpus = f.readlines()
@@ -11,8 +11,10 @@ for index, text in enumerate(corpus):
     token = nlp(text)
     svos = findSVOs(token)
     sms = findSMs(token)
+    vms = findVMs(token)
     print(f"========={index}=========")
     print(text)
     print(svos)
     print(sms)
+    print(vms)
 

@@ -25,18 +25,18 @@ OBJECTS = {"dobj", "dative", "attr", "oprd", "acomp", "pobj"}
 # POS tags that will break adjoining items
 BREAKER_POS = {"VERB"}
 # words that are negations
-NEGATIONS = {"no", "not", "n't", "never", "none"}
+NEGATIONS = {}
 
 # AUX
 AUX = {"be", "is", "was", "are", "were"}
 # special phrases
-SPECIAL_PHRASES = {"regarded as", "viewed as", "known as"}
+SPECIAL_PHRASES = {"regarded as", "viewed as", "known as", "considered as"}
 
 
 def get_special_phrases(text):
     for sp in SPECIAL_PHRASES:
         if text.find(sp) != -1:
-            return sp
+            return sp + ' '
     return ''
 
 
@@ -79,7 +79,7 @@ def _find_subs(tok):
     head = tok.head
     while head.pos_ != "VERB" and head.pos_ != "NOUN" and head.head != head:
         head = head.head
-    if head.pos_ == "VERB":
+    if head.pos_ == "VERB" or head.pos_ == "AUX":
         subs = [tok for tok in head.lefts if tok.dep_ in SUBJECTS]
         if len(subs) > 0:
             verb_negated = _is_negated(head)
@@ -113,12 +113,20 @@ def _find_svs(tokens):
     return svs
 
 
+def _get_mods_from_prepositions(deps, tokens, visited):
+    mods = []
+    for dep in deps:
+        if dep.pos_ == "ADP" and dep.dep_ == "prep":
+            mods.extend(expand(dep, tokens, visited))
+    return mods
+
+
 # get grammatical objects for a given set of dependencies (including passive sentences)
 def _get_objs_from_prepositions(deps, is_pas):
     objs = []
     for dep in deps:
-        if dep.pos_ == "ADP" and (dep.dep_ == "prep" or (is_pas and dep.dep_ == "agent")):
-            objs.extend([tok for tok in dep.rights if tok.dep_  in OBJECTS or
+        if dep.pos_ == "ADP" and is_pas and dep.dep_ == "agent":
+            objs.extend([tok for tok in dep.rights if tok.dep_ in OBJECTS or
                          (tok.pos_ == "PRON" and tok.lower_ == "me") or
                          (is_pas and tok.dep_ == 'pobj')])
     return objs
@@ -174,7 +182,7 @@ def _find_verbs(tokens):
 
 # is the token a verb?  (excluding auxiliary verbs)
 def _is_non_aux_verb(tok):
-    return (tok.pos_ == "VERB" or tok.pos_ == "AUX") and (tok.dep_ != "aux" and tok.dep_ != "auxpass")
+    return (tok.pos_ == "VERB" or tok.pos_ == "AUX") and (tok.dep_ != "aux" and tok.dep_ != "auxpass" and tok.dep_ != "acl" and tok.dep_ != "advcl")
 
 
 # is the token a verb?  (excluding auxiliary verbs)
@@ -223,10 +231,14 @@ def _get_all_objs(v, is_pas):
 def _get_passive_verbs(tokens):
     passive_verbs = []
     for tok in tokens:
-        if tok.dep_ == "acl":
-            passive_verbs.append(tok)
-        elif tok.dep_ == "auxpass":
+        # if tok.dep_ == "acl" or tok.dep_ == "advcl":
+        #     passive_verbs.append(tok)
+        if tok.dep_ == "auxpass":
             passive_verbs.append(tok.head)
+        for item in tok.rights:
+            if item.dep_ == "agent":
+                passive_verbs.append(tok)
+                break
 
     return passive_verbs
 
@@ -276,14 +288,17 @@ def expand(item, tokens, visited):
             if part.pos_ in BREAKER_POS:
                 break
             if not part.lower_ in NEGATIONS:
+                if hasattr(part, 'lefts'):
+                    for item2 in part.lefts:
+                        if item2.i not in visited:
+                            visited.add(item2.i)
+                            parts.extend(expand(item2, tokens, visited))
                 parts.append(part)
                 if hasattr(part, 'rights'):
                     for item2 in part.rights:
-                        # if item2.pos_ == "DET" or item2.pos_ == "NOUN":
-                            if item2.i not in visited:
-                                visited.add(item2.i)
-                                parts.extend(expand(item2, tokens, visited))
-                        # break
+                        if item2.i not in visited:
+                            visited.add(item2.i)
+                            parts.extend(expand(item2, tokens, visited))
 
     return parts
 
@@ -315,7 +330,7 @@ def passive_expand(item, tokens, visited):
 
     if hasattr(parts[-1], 'rights'):
         for item2 in parts[-1].rights:
-            if item2.pos_ == "DET" or item2.pos_ == "NOUN":
+            if item2.pos_ == "DET" or item2.pos_ == "NOUN" or item2.pos_ == "PROPN":
                 if item2.i not in visited:
                     visited.add(item2.i)
                     parts.extend(expand(item2, tokens, visited))
@@ -337,8 +352,8 @@ def findSVOs(tokens):
     svos = []
     passive_verbs = _get_passive_verbs(tokens)
     verbs = _find_verbs(tokens)
-    visited = set()  # recursion detection
     for v in verbs:
+        visited = set()  # recursion detection
         subs, verbNegated = _get_all_subs(v)
         # hopefully there are subs, if not, don't examine this verb any longer
         if len(subs) > 0:
@@ -420,11 +435,11 @@ def get_modifier(item, tokens, visited):
 
 # find subjects and their modifiers to create SMs
 def findSMs(tokens):
-    sms = []
+    sms = set()
     passive_verbs = _get_passive_verbs(tokens)
     verbs = _find_verbs(tokens)
-    visited = set()  # recursion detection
     for v in verbs:
+        visited = set()  # recursion detection
         subs, verbNegated = _get_all_subs(v)
         # hopefully there are subs, if not, don't examine this verb any longer
         if len(subs) > 0:
@@ -434,10 +449,10 @@ def findSMs(tokens):
                 v2, objs = _get_all_objs(conjV, is_pas)
                 if is_pas:
                     for obj in objs:
-                        sms.append((to_str(get_subject(obj)), to_str(get_modifier(obj, tokens, visited))))
+                        sms.add((to_str(get_subject(obj)), to_str(get_modifier(obj, tokens, visited))))
                 else:
                     for sub in subs:
-                        sms.append((to_str(get_subject(sub)), to_str(get_modifier(sub, tokens, visited))))
+                        sms.add((to_str(get_subject(sub)), to_str(get_modifier(sub, tokens, visited))))
 
             else:
                 is_pas = v in passive_verbs
@@ -445,9 +460,24 @@ def findSMs(tokens):
                 if is_pas:
                     if len(objs) > 0:
                         for obj in objs:
-                            sms.append((to_str(get_subject(obj)), to_str(get_modifier(obj, tokens, visited))))
+                            sms.add((to_str(get_subject(obj)), to_str(get_modifier(obj, tokens, visited))))
                 else:
                     for sub in subs:
-                        sms.append((to_str(get_subject(sub)), to_str(get_modifier(sub, tokens, visited))))
+                        sms.add((to_str(get_subject(sub)), to_str(get_modifier(sub, tokens, visited))))
 
-    return sms
+    return list(sms)
+
+
+# find subjects and their modifiers to create SMs
+def findVMs(tokens):
+    vms = []
+    verbs = _find_verbs(tokens)
+    for v in verbs:
+        visited = set()
+        mods = _get_mods_from_prepositions(v.rights, tokens, visited)
+        if len(mods) > 0:
+            vms.append((v.lower_, to_str(mods)))
+        else:
+            vms.append((v.lower_, ''))
+
+    return vms

@@ -1,6 +1,6 @@
 # syntactic-constituent-extraction
 
-Extract (subject, verb, object) and (subject, modifiers) relations from a sentence using Spacy.
+Extract (subject, verb, object) , (subject, mod) and (verb, mod) relations from a sentence using Spacy.
 
 ## Installation
 
@@ -24,14 +24,19 @@ python demo.py
 For the sentence below as an example.
 
 ```
-The fight scene finale between Sharon and the character played by Ali Larter, from the movie, won the 2010 MTV Movie Award for Best Fight.
+For the third straight season, the number one seeds from both conferences met in the Super Bowl. 
 ```
 
-Outputs includes the original sentence, a list of SVO tuples and a list of SM tuples.
+Outputs includes the original sentence, a list of SVO tuples, a list of SM tuples and a list of VM tuples.
 
 ```
-The fight scene finale between Sharon and the character played by Ali Larter, from the movie, won the 2010 MTV Movie Award for Best Fight.
-[('Ali Larter', 'play', 'the character'), ('The fight scene finale between Sharon and character played by Ali Larter , from the movie', 'won', 'the 2010 MTV Movie Award for Best Fight')]
-[('Ali Larter', ''), ('The fight scene finale', 'between Sharon and character played by Ali Larter , from the movie')]
+For the third straight season, the number one seeds from both conferences met in the Super Bowl. 
+[('the number seeds from both conferences', 'met')]
+[('the number seeds', 'from both conferences')]
+[('met', 'in the Super Bowl')]
 ```
 
+## Notes
+
+- When there is no object, the program will return just SV parts.
+- When there is no mod for subject or object, the program will return (subject, '') or (object, '').
