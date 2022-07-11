@@ -279,7 +279,17 @@ def expand(item, tokens, visited):
             if part.pos_ in BREAKER_POS:
                 break
             if not part.lower_ in NEGATIONS:
+                if hasattr(part, 'lefts'):
+                    for item2 in part.lefts:
+                        if item2.i not in visited:
+                            visited.add(item2.i)
+                            parts.extend(expand(item2, tokens, visited))
                 parts.append(part)
+                if hasattr(part, 'rights'):
+                    for item2 in part.rights:
+                        if item2.i not in visited:
+                            visited.add(item2.i)
+                            parts.extend(expand(item2, tokens, visited))
 
     parts.append(item)
 
@@ -395,7 +405,7 @@ def findSVOs(tokens):
     return svos
 
 
-def get_subject(item):
+def get_subject(item, tokens, visited):
     parts = []
 
     if hasattr(item, 'lefts'):
@@ -403,7 +413,17 @@ def get_subject(item):
             if part.pos_ in BREAKER_POS:
                 break
             if not part.lower_ in NEGATIONS:
+                if hasattr(part, 'lefts'):
+                    for item2 in part.lefts:
+                        if item2.i not in visited:
+                            visited.add(item2.i)
+                            parts.extend(expand(item2, tokens, visited))
                 parts.append(part)
+                if hasattr(part, 'rights'):
+                    for item2 in part.rights:
+                        if item2.i not in visited:
+                            visited.add(item2.i)
+                            parts.extend(expand(item2, tokens, visited))
 
     parts.append(item)
 
@@ -449,10 +469,10 @@ def findSMs(tokens):
                 v2, objs = _get_all_objs(conjV, is_pas)
                 if is_pas:
                     for obj in objs:
-                        sms.add((to_str(get_subject(obj)), to_str(get_modifier(obj, tokens, visited))))
+                        sms.add((to_str(get_subject(obj, tokens, visited)), to_str(get_modifier(obj, tokens, visited))))
                 else:
                     for sub in subs:
-                        sms.add((to_str(get_subject(sub)), to_str(get_modifier(sub, tokens, visited))))
+                        sms.add((to_str(get_subject(sub, tokens, visited)), to_str(get_modifier(sub, tokens, visited))))
 
             else:
                 is_pas = v in passive_verbs
@@ -460,10 +480,10 @@ def findSMs(tokens):
                 if is_pas:
                     if len(objs) > 0:
                         for obj in objs:
-                            sms.add((to_str(get_subject(obj)), to_str(get_modifier(obj, tokens, visited))))
+                            sms.add((to_str(get_subject(obj, tokens, visited)), to_str(get_modifier(obj, tokens, visited))))
                 else:
                     for sub in subs:
-                        sms.add((to_str(get_subject(sub)), to_str(get_modifier(sub, tokens, visited))))
+                        sms.add((to_str(get_subject(sub, tokens, visited)), to_str(get_modifier(sub, tokens, visited))))
 
     return list(sms)
 

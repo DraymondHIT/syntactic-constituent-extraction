@@ -31,8 +31,8 @@ Outputs includes the original sentence, a list of SVO tuples, a list of SM tuple
 
 ```
 For the third straight season, the number one seeds from both conferences met in the Super Bowl. 
-[('the number seeds from both conferences', 'met')]
-[('the number seeds', 'from both conferences')]
+[('the number one seeds from both conferences', 'met')]
+[('the number one seeds', 'from both conferences')]
 [('met', 'in the Super Bowl')]
 ```
 
