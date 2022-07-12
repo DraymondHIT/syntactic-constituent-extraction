@@ -15,3 +15,6 @@ Manhattan is a world center for training and education in medicine and the life 
 Fossils found in Kenya suggest that primates roamed the area more than 20 million years ago.
 During excavations at Lake Turkana in 1984, paleoanthropologist Richard Leakey assisted by Kamoya Kimeu discovered the Turkana Boy, a 1.6-million-year-old fossil belonging to Homo erectus.
 The cat loves the mouse that is delicious.
+The number of chloroplasts per cell varies from 1 in algae up to 100 in plants like Arabidopsis and wheat.
+They then use the ATP and NADPH to make organic molecules from carbon dioxide in a process known as the Calvin cycle.
+Chloroplasts are highly dynamic, they circulate and move around within plant cells, and occasionally pinch in two to reproduce.
