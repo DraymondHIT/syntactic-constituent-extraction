@@ -13,8 +13,8 @@ for index, text in enumerate(corpus):
     sms = findSMs(token)
     vms = findVMs(token)
     print(f"========={index}=========")
-    print(text)
-    print(svos)
-    print(sms)
-    print(vms)
+    print(f"text: {text}")
+    print(f"SVO:  {svos}")
+    print(f"SM:   {sms}")
+    print(f"VM:   {vms}")
 

@@ -29,6 +29,8 @@ NEGATIONS = {"no", "not", "n't", "never", "none"}
 
 # AUX
 AUX = {"be", "is", "was", "are", "were"}
+# relative word
+RELATIVE_WORDS = {"which", "that"}
 # special phrases
 SPECIAL_PHRASES = {"regarded as", "viewed as", "known as", "considered as"}
 
@@ -268,7 +270,7 @@ def expand(item, tokens, visited):
 
     if hasattr(item, 'lefts'):
         for part in item.lefts:
-            if part.pos_ in BREAKER_POS:
+            if part.pos_ in BREAKER_POS or part.i in visited:
                 break
             if not part.lower_ in NEGATIONS:
                 if hasattr(part, 'lefts'):
@@ -287,7 +289,7 @@ def expand(item, tokens, visited):
 
     if hasattr(item, 'rights'):
         for part in item.rights:
-            if part.pos_ in BREAKER_POS:
+            if part.pos_ in BREAKER_POS or part.i in visited:
                 break
             if not part.lower_ in NEGATIONS:
                 if hasattr(part, 'lefts'):
@@ -349,6 +351,21 @@ def to_str(tokens):
         return ''
 
 
+def _get_verb_advmod(item):
+    if len(list(item.rights)) == 0 or (list(item.rights)[0].dep_ != "advmod" and list(item.rights)[0].dep_ != "prt"):
+        return ''
+    else:
+        return ' ' + list(item.rights)[0].lemma_
+
+
+def _process_relative_word(item, visited):
+    if item.lemma_ in RELATIVE_WORDS and (item.dep_ == "nsubjpass" or item.dep_ == "nsubj") and item.head.dep_ == "relcl":
+        visited.add(item.i)
+        visited.add(item.head.i)
+        item = item.head.head
+    return item, visited
+
+
 # find verbs and their subjects / objects to create SVOs, detect passive/active sentences
 def findSVOs(tokens):
     svos = []
@@ -356,7 +373,7 @@ def findSVOs(tokens):
     verbs = _find_verbs(tokens)
     for v in verbs:
         visited = set()  # recursion detection
-        advmod = '' if len(list(v.rights)) == 0 or list(v.rights)[0].dep_ != "advmod" else ' ' + list(v.rights)[0].lemma_
+        advmod = _get_verb_advmod(v)
         subs, verbNegated = _get_all_subs(v)
         # hopefully there are subs, if not, don't examine this verb any longer
         if len(subs) > 0:
@@ -364,11 +381,13 @@ def findSVOs(tokens):
             if isConjVerb:
                 is_pas = conjV in passive_verbs
                 v2, objs = _get_all_objs(conjV, is_pas)
-                advmod2 = '' if len(list(v.rights)) == 0 or list(v.rights)[0].dep_ != "advmod" else ' ' + list(v.rights)[0].lemma_
+                advmod2 = _get_verb_advmod(v2)
                 for sub in subs:
+                    sub, visited = _process_relative_word(sub, visited)
                     if len(objs) > 0:
                         for obj in objs:
                             objNegated = _is_negated(obj)
+                            obj, visited = _process_relative_word(obj, visited)
                             if is_pas:  # reverse object / subject for passive
                                 svos.append((to_str(passive_expand(obj, tokens, visited)),
                                              "!" + v.lemma_ + advmod if verbNegated or objNegated else v.lemma_ + advmod, to_str(passive_expand(sub, tokens, visited))))
@@ -385,11 +404,13 @@ def findSVOs(tokens):
             else:
                 is_pas = v in passive_verbs
                 v, objs = _get_all_objs(v, is_pas)
-                advmod = '' if len(list(v.rights)) == 0 or list(v.rights)[0].dep_ != "advmod" else ' ' + list(v.rights)[0].lemma_
+                advmod = _get_verb_advmod(v)
                 for sub in subs:
+                    sub, visited = _process_relative_word(sub, visited)
                     if len(objs) > 0:
                         for obj in objs:
                             objNegated = _is_negated(obj)
+                            obj, visited = _process_relative_word(obj, visited)
                             if is_pas:  # reverse object / subject for passive
                                 svos.append((to_str(passive_expand(obj, tokens, visited)),
                                              "!" + v.lemma_ + advmod if verbNegated or objNegated else v.lemma_ + advmod, to_str(passive_expand(sub, tokens, visited))))
@@ -468,9 +489,11 @@ def findSMs(tokens):
                 v2, objs = _get_all_objs(conjV, is_pas)
                 if is_pas:
                     for obj in objs:
+                        obj, visited = _process_relative_word(obj, visited)
                         sms.add((to_str(get_subject(obj, tokens, visited)), to_str(get_modifier(obj, tokens, visited))))
                 else:
                     for sub in subs:
+                        sub, visited = _process_relative_word(sub, visited)
                         sms.add((to_str(get_subject(sub, tokens, visited)), to_str(get_modifier(sub, tokens, visited))))
 
             else:
@@ -479,9 +502,11 @@ def findSMs(tokens):
                 if is_pas:
                     if len(objs) > 0:
                         for obj in objs:
+                            obj, visited = _process_relative_word(obj, visited)
                             sms.add((to_str(get_subject(obj, tokens, visited)), to_str(get_modifier(obj, tokens, visited))))
                 else:
                     for sub in subs:
+                        sub, visited = _process_relative_word(sub, visited)
                         sms.add((to_str(get_subject(sub, tokens, visited)), to_str(get_modifier(sub, tokens, visited))))
 
     return list(sms)
@@ -510,7 +535,7 @@ def findVMs(tokens):
     verbs = _find_verbs(tokens)
     for v in verbs:
         visited = set()
-        advmod = '' if len(list(v.rights)) == 0 or list(v.rights)[0].dep_ != "advmod" else ' ' + list(v.rights)[0].lemma_
+        advmod = _get_verb_advmod(v)
         mods = _get_mods_from_prepositions(v.rights, tokens, visited)
         _mods = _get_mods_from_clauses(v.rights, tokens, visited)
         if len(mods) > 0:
