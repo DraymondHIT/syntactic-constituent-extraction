@@ -358,16 +358,20 @@ def _get_verb_advmod(item):
         return ' ' + list(item.rights)[0].lemma_
 
 
-def _process_relative_word(item, visited):
+def _process_relative_word_and_pron(item, visited, coref=None):
     if item.lemma_ in RELATIVE_WORDS and (item.dep_ == "nsubjpass" or item.dep_ == "nsubj") and item.head.dep_ == "relcl":
         visited.add(item.i)
         visited.add(item.head.i)
         item = item.head.head
+    elif coref is not None and item.pos_ == "PRON":
+        result = coref._.coref_chains.resolve(coref[item.i])
+        if result is not None:
+            item = result[0]
     return item, visited
 
 
 # find verbs and their subjects / objects to create SVOs, detect passive/active sentences
-def findSVOs(tokens):
+def findSVOs(tokens, coref=None):
     svos = []
     passive_verbs = _get_passive_verbs(tokens)
     verbs = _find_verbs(tokens)
@@ -383,11 +387,11 @@ def findSVOs(tokens):
                 v2, objs = _get_all_objs(conjV, is_pas)
                 advmod2 = _get_verb_advmod(v2)
                 for sub in subs:
-                    sub, visited = _process_relative_word(sub, visited)
+                    sub, visited = _process_relative_word_and_pron(sub, visited, coref)
                     if len(objs) > 0:
                         for obj in objs:
                             objNegated = _is_negated(obj)
-                            obj, visited = _process_relative_word(obj, visited)
+                            obj, visited = _process_relative_word_and_pron(obj, visited, coref)
                             if is_pas:  # reverse object / subject for passive
                                 svos.append((to_str(passive_expand(obj, tokens, visited)),
                                              "!" + v.lemma_ + advmod if verbNegated or objNegated else v.lemma_ + advmod, to_str(passive_expand(sub, tokens, visited))))
@@ -406,11 +410,11 @@ def findSVOs(tokens):
                 v, objs = _get_all_objs(v, is_pas)
                 advmod = _get_verb_advmod(v)
                 for sub in subs:
-                    sub, visited = _process_relative_word(sub, visited)
+                    sub, visited = _process_relative_word_and_pron(sub, visited, coref)
                     if len(objs) > 0:
                         for obj in objs:
                             objNegated = _is_negated(obj)
-                            obj, visited = _process_relative_word(obj, visited)
+                            obj, visited = _process_relative_word_and_pron(obj, visited, coref)
                             if is_pas:  # reverse object / subject for passive
                                 svos.append((to_str(passive_expand(obj, tokens, visited)),
                                              "!" + v.lemma_ + advmod if verbNegated or objNegated else v.lemma_ + advmod, to_str(passive_expand(sub, tokens, visited))))
@@ -474,7 +478,7 @@ def get_modifier(item, tokens, visited):
 
 
 # find subjects and their modifiers to create SMs
-def findSMs(tokens):
+def findSMs(tokens, coref=None):
     sms = set()
     passive_verbs = _get_passive_verbs(tokens)
     verbs = _find_verbs(tokens)
@@ -489,11 +493,11 @@ def findSMs(tokens):
                 v2, objs = _get_all_objs(conjV, is_pas)
                 if is_pas:
                     for obj in objs:
-                        obj, visited = _process_relative_word(obj, visited)
+                        obj, visited = _process_relative_word_and_pron(obj, visited, coref)
                         sms.add((to_str(get_subject(obj, tokens, visited)), to_str(get_modifier(obj, tokens, visited))))
                 else:
                     for sub in subs:
-                        sub, visited = _process_relative_word(sub, visited)
+                        sub, visited = _process_relative_word_and_pron(sub, visited, coref)
                         sms.add((to_str(get_subject(sub, tokens, visited)), to_str(get_modifier(sub, tokens, visited))))
 
             else:
@@ -502,11 +506,11 @@ def findSMs(tokens):
                 if is_pas:
                     if len(objs) > 0:
                         for obj in objs:
-                            obj, visited = _process_relative_word(obj, visited)
+                            obj, visited = _process_relative_word_and_pron(obj, visited, coref)
                             sms.add((to_str(get_subject(obj, tokens, visited)), to_str(get_modifier(obj, tokens, visited))))
                 else:
                     for sub in subs:
-                        sub, visited = _process_relative_word(sub, visited)
+                        sub, visited = _process_relative_word_and_pron(sub, visited, coref)
                         sms.add((to_str(get_subject(sub, tokens, visited)), to_str(get_modifier(sub, tokens, visited))))
 
     return list(sms)
