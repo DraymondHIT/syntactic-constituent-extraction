@@ -16,7 +16,7 @@ python -m spacy download en_core_web_sm
 
 ## Parameters Download
 
- [cause-effect-detection](https://huggingface.co/noahjadallah/cause-effect-detection) is a pretrained model, so there is no need to download parameters manually. However, for  [CiRA](https://github.com/fischJan/CiRA), the authors did not supply model parameters. Of course, you could train the model by yourself, but if you would like to run the following demo quickly, you can download parameters for [CiRA](https://github.com/fischJan/CiRA) by this [link](https://drive.google.com/file/d/1yNUSmFVjscanJ36dTz1NkOeV6huykfSM/view?usp=sharing). After download parameters, you had better to put it under the `./models/` directory.
+ [cause-effect-detection](https://huggingface.co/noahjadallah/cause-effect-detection) is a pretrained model, so there is no need to download parameters manually. However, for  [CiRA](https://github.com/fischJan/CiRA), the authors did not supply model parameters. Of course, you could train the model by yourself, but if you would like to run the following demo quickly, you can download parameters for [CiRA](https://github.com/fischJan/CiRA) by this [link](https://drive.google.com/file/d/1RSCnCMlgnP4z0cBsESILilhFZ1YQ0Az7/view?usp=sharing). After download parameters, you had better to put it under the `./models/` directory.
 
 ## Run the Demo
 
@@ -46,8 +46,10 @@ CE:   None
 
 - When there is no object, the program will return just SV parts.
 - When there is no mod for subject or object, the program will return (subject, '') or (object, '').
-- When there is no cause-and-effect relationship in the sentence, the program will return None. Otherwise, a dictionary contains keys named `cause` and `effect` will be returned.
+- When there is no cause-and-effect relationship in the sentence, the program will return None. Otherwise, a dictionary containing keys named `cause` and `effect` will be returned.
 
 ## TODO
 
-- Realize batch processing
+- [ ] Realize batch processing
+
+- [ ] Improve the accuracy of cause-and-effect relationship extraction

@@ -4,6 +4,8 @@ import torch
 
 tokenizer = AutoTokenizer.from_pretrained("noahjadallah/cause-effect-detection")
 model = AutoModelForTokenClassification.from_pretrained("noahjadallah/cause-effect-detection")
+
+
 # label_list = ['O', 'B-CAUSE', 'I-CAUSE', 'B-EFFECT', 'I-EFFECT']
 
 
@@ -19,18 +21,31 @@ def cause_effect_detection(text):
 
     cause_tokens = []
     effect_tokens = []
+    cause_index = -1
+    effect_index = -1
     for i in range(len(tokens)):
-        if predictions[0].numpy()[i] in {1, 2}:
-            cause_tokens.append(tokens[i])
-        elif predictions[0].numpy()[i] in {3, 4}:
-            effect_tokens.append(tokens[i])
+        if predictions[0].numpy()[i] == 1:
+            cause_tokens.append([tokens[i]])
+            cause_index = i
+        elif predictions[0].numpy()[i] == 2:
+            if len(cause_tokens) == 0 or cause_index + 1 != i:
+                continue
+            cause_tokens[-1].append(tokens[i])
+            cause_index = i
+        elif predictions[0].numpy()[i] == 3:
+            effect_tokens.append([tokens[i]])
+            effect_index = i
+        elif predictions[0].numpy()[i] == 4:
+            if len(effect_tokens) == 0 or effect_index + 1 != i:
+                continue
+            effect_tokens[-1].append(tokens[i])
+            effect_index = i
 
     if len(cause_tokens) == 0 or len(effect_tokens) == 0:
         return None
     else:
-        cause_text = tokenizer.convert_tokens_to_string(cause_tokens)
-        effect_text = tokenizer.convert_tokens_to_string(effect_tokens)
+        cause_text = [tokenizer.convert_tokens_to_string(tokens) for tokens in cause_tokens]
+        effect_text = [tokenizer.convert_tokens_to_string(tokens) for tokens in effect_tokens]
         result = {"cause": cause_text, "effect": effect_text}
 
     return result
-
