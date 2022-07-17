@@ -23,15 +23,16 @@ class CausalClassifier(nn.Module):
         return self.out(output)
 
 
+tokenizer = BertTokenizer.from_pretrained(PRE_TRAINED_MODEL_NAME)
+model = CausalClassifier(2)
+
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+model = model.to(device)
+model.load_state_dict(torch.load("./models/causal_classifier.bin"))
+model.eval()
+
+
 def get_label(text):
-    tokenizer = BertTokenizer.from_pretrained(PRE_TRAINED_MODEL_NAME)
-
-    model = CausalClassifier(2)
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    model = model.to(device)
-    model.load_state_dict(torch.load("./models/causal_classifier.bin"))
-    model.eval()
-
     inputs = tokenizer(text, return_tensors="pt")
     inputs = inputs.to(device)
     outputs = model(inputs)

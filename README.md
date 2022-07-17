@@ -1,7 +1,7 @@
 # syntactic-constituent-extraction
 
 - Extract (subject, verb, object) , (subject, mod) and (verb, mod) relations from a sentence using Spacy.
-- Detect and extract (if exists) cause-and-effect relationship from a sentence using  [CiRA](https://github.com/fischJan/CiRA) and [cause-effect-detection](https://huggingface.co/noahjadallah/cause-effect-detection).
+- Detect and extract (if exists) cause-and-effect relationship from a sentence using  [CiRA](https://github.com/fischJan/CiRA) and [Multilabel Models](https://zenodo.org/record/5550387#.YtQElnZBxPZ).
 
 ## Installation
 
@@ -16,7 +16,13 @@ python -m spacy download en_core_web_sm
 
 ## Parameters Download
 
- [cause-effect-detection](https://huggingface.co/noahjadallah/cause-effect-detection) is a pretrained model, so there is no need to download parameters manually. However, for  [CiRA](https://github.com/fischJan/CiRA), the authors did not supply model parameters. Of course, you could train the model by yourself, but if you would like to run the following demo quickly, you can download parameters for [CiRA](https://github.com/fischJan/CiRA) by this [link](https://drive.google.com/file/d/1RSCnCMlgnP4z0cBsESILilhFZ1YQ0Az7/view?usp=sharing). After download parameters, you had better to put it under the `./models/` directory.
+For  [CiRA](https://github.com/fischJan/CiRA), the authors did not supply model parameters. Of course, you could train the model by yourself, but if you would like to run the following demo quickly, you can download parameters for [CiRA](https://github.com/fischJan/CiRA) by this [link](https://drive.google.com/file/d/1RSCnCMlgnP4z0cBsESILilhFZ1YQ0Az7/view?usp=sharing). After download parameters, you can put them under the `./models/` directory. For  [Multilabel Models](https://zenodo.org/record/5550387#.YtQElnZBxPZ), you can download parameters by run
+
+```bash
+gdown --id 1NizNkSdah8Jcs8wtDTD5dEnxUWrCP4Zi -O roberta_dropout_linear_layer_multilabel.ckpt
+```
+
+After that, you can also put the parameters under the same directory.
 
 ## Run the Demo
 
@@ -29,17 +35,17 @@ python demo.py
 For the sentence below as an example.
 
 ```
-For the third straight season, the number one seeds from both conferences met in the Super Bowl. 
+If a user signs up, he will receive a confirmation email.
 ```
 
 Outputs includes the original sentence, a list of SVO tuples, a list of SM tuples, a list of VM tuples and cause-and-effect relationship if it exists.
 
 ```
-text: For the third straight season, the number one seeds from both conferences met in the Super Bowl. 
-SVO:  [('the number one seeds from both conferences', 'met')]
-SM:   [('the number one seeds', 'from both conferences')]
-VM:   [('met', 'in the Super Bowl')]
-CE:   None
+text: If a user signs up, he will receive a confirmation email.
+SVO:  [('a user', 'receive', 'a confirmation email')]
+SM:   [('a user', '')]
+VM:   [('receive', '')]
+CE:   {'cause': ['a user signs up'], 'effect': ['he will receive a confirmation email']}
 ```
 
 ## Notes
