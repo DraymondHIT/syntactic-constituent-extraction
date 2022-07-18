@@ -1,7 +1,7 @@
 # syntactic-constituent-extraction
 
 - Extract (subject, verb, object) , (subject, mod) and (verb, mod) relations from a sentence using Spacy.
-- Detect and extract (if exists) cause-and-effect relationship from a sentence using  [CiRA](https://github.com/fischJan/CiRA) and [Multilabel Models](https://zenodo.org/record/5550387#.YtQElnZBxPZ).
+- Detect and extract (if exists) cause-and-effect relationship from a sentence using  [CiRA](https://github.com/fischJan/CiRA) and [Multilabel Model](https://zenodo.org/record/5550387#.YtQElnZBxPZ).
 
 ## Installation
 
@@ -16,7 +16,7 @@ python -m spacy download en_core_web_sm
 
 ## Parameters Download
 
-For  [CiRA](https://github.com/fischJan/CiRA), the authors did not supply model parameters. Of course, you could train the model by yourself, but if you would like to run the following demo quickly, you can download parameters for [CiRA](https://github.com/fischJan/CiRA) by this [link](https://drive.google.com/file/d/1RSCnCMlgnP4z0cBsESILilhFZ1YQ0Az7/view?usp=sharing). After download parameters, you can put them under the `./models/` directory. For  [Multilabel Models](https://zenodo.org/record/5550387#.YtQElnZBxPZ), you can download parameters by run
+For  [CiRA](https://github.com/fischJan/CiRA), the authors did not supply model parameters. Of course, you could train the model by yourself, but if you would like to run the following demo quickly, you can download parameters for [CiRA](https://github.com/fischJan/CiRA) by this [link](https://drive.google.com/file/d/1-0lMwVoRyCYmi30z942Kb4LMeJ7ZcRH5/view?usp=sharing). After download parameters, you can put them under the `./models/` directory. For  [Multilabel Models](https://zenodo.org/record/5550387#.YtQElnZBxPZ), you can download parameters by run
 
 ```bash
 gdown --id 1NizNkSdah8Jcs8wtDTD5dEnxUWrCP4Zi -O roberta_dropout_linear_layer_multilabel.ckpt

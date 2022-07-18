@@ -2,7 +2,7 @@ from transformers import BertModel, BertTokenizer
 import torch
 from torch import nn
 
-PRE_TRAINED_MODEL_NAME = "bert-base-cased"
+PRE_TRAINED_MODEL_NAME = "bert-base-uncased"
 
 
 class CausalClassifier(nn.Module):
