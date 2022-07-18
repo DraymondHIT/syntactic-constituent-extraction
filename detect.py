@@ -127,6 +127,16 @@ if USE_GPU:
 model.eval()
 
 
+def convert_tokens_to_string(tokens):
+    output = ''
+    for token in tokens:
+        if token.startswith('Ġ'):
+            output += ' ' + token.replace('Ġ', '')
+        else:
+            output += token
+    return output.strip()
+
+
 def cause_effect_detection(text):
     if get_label(text) == 0:
         return None
@@ -152,30 +162,40 @@ def cause_effect_detection(text):
 
     cause_tokens = []
     effect_tokens = []
+    cause_index = [False, False, False]
+    effect_index = [False, False, False]
     for token_prediction_idx, token_prediction in enumerate(predictions[0][1:-1]):
         token_predicted_labels = []
         token = tokens[token_prediction_idx]
         for label_prediction_idx, label_prediction in enumerate(token_prediction):
             if label_prediction == 1:
                 token_predicted_labels.append(LABEL_IDS[label_prediction_idx])
-        token = token.replace("Ġ", "")
+        # token = token.replace("Ġ", "")
         if token in TOKENIZER.all_special_tokens or len(token_predicted_labels) == 0:
             continue
+        index = token_predicted_labels[0][-1]
+        if index not in {'1', '2', '3'}:
+            continue
+        index = eval(index)
         if token_predicted_labels[0].startswith("CAUSE"):
-            if eval(token_predicted_labels[0][-1]) > len(cause_tokens):
+            if not cause_index[index-1]:
                 cause_tokens.append([token])
+                cause_index[index-1] = True
             else:
                 cause_tokens[-1].append(token)
         elif token_predicted_labels[0].startswith("EFFECT"):
-            if eval(token_predicted_labels[0][-1]) > len(effect_tokens):
+            if not effect_index[index-1]:
                 effect_tokens.append([token])
+                effect_index[index-1] = True
             else:
                 effect_tokens[-1].append(token)
 
-    cause_tokens = [' '.join(tokens) for tokens in cause_tokens]
-    effect_tokens = [' '.join(tokens) for tokens in effect_tokens]
+    if len(cause_tokens) == 0 or len(effect_tokens) == 0:
+        return None
+    cause_tokens = [convert_tokens_to_string(tokens) for tokens in cause_tokens]
+    effect_tokens = [convert_tokens_to_string(tokens) for tokens in effect_tokens]
 
     return {"cause": cause_tokens, "effect": effect_tokens}
 
 
-cause_effect_detection("While Islamist political culture itself may not be democratic, Islamists need democratic elections to maintain their legitimacy.")
+cause_effect_detection("Chloroplasts are highly dynamic, they circulate and move around within plant cells, and occasionally pinch in two to reproduce.")
