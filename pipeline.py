@@ -1,4 +1,4 @@
-from extract import findSVOs, findSMs, findVMs, nlp, get_special_phrases
+from extract import findSVOs, findSMs, findVMs, nlp
 from coref import nlp as coref_model
 from detect import cause_effect_detection
 
@@ -6,9 +6,6 @@ from detect import cause_effect_detection
 class pipeline:
     def __init__(self, text):
         self.text = text
-        special_phrases = get_special_phrases(text)
-        if special_phrases != '':
-            text = text.replace(special_phrases, '')
         token = nlp(text)
         self.doc = coref_model(text)
         self.svos = findSVOs(token, self.doc)

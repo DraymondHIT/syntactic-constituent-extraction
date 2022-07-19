@@ -31,15 +31,8 @@ NEGATIONS = {"no", "not", "n't", "never", "none"}
 AUX = {"be", "is", "was", "are", "were"}
 # relative word
 RELATIVE_WORDS = {"which", "that"}
-# special phrases
-SPECIAL_PHRASES = {"regarded as", "viewed as", "known as", "considered as"}
-
-
-def get_special_phrases(text):
-    for sp in SPECIAL_PHRASES:
-        if text.find(sp) != -1:
-            return sp + ' '
-    return ''
+# special verb dependencies
+SPECIAL_VERB_DEPS = {"amod", "acl"}
 
 
 # does dependency set contain any coordinating conjunctions?
@@ -176,7 +169,7 @@ def _find_verbs(tokens):
 
 # is the token a verb?  (excluding auxiliary verbs)
 def _is_non_aux_verb(tok):
-    return (tok.pos_ == "VERB" or tok.pos_ == "AUX") and (tok.dep_ != "aux" and tok.dep_ != "auxpass" and tok.dep_ != "acl" and tok.dep_ != "advcl")
+    return (tok.pos_ == "VERB" or tok.pos_ == "AUX") and (tok.dep_ != "aux" and tok.dep_ != "auxpass" and tok.dep_ not in SPECIAL_VERB_DEPS and tok.dep_ != "advcl")
 
 
 # is the token a verb?  (excluding auxiliary verbs)
@@ -270,7 +263,7 @@ def expand(item, tokens, visited):
 
     if hasattr(item, 'lefts'):
         for part in item.lefts:
-            if part.pos_ in BREAKER_POS or part.i in visited:
+            if part.pos_ in BREAKER_POS and part.dep_ not in SPECIAL_VERB_DEPS or part.i in visited:
                 break
             if not part.lower_ in NEGATIONS:
                 if hasattr(part, 'lefts'):
@@ -289,7 +282,7 @@ def expand(item, tokens, visited):
 
     if hasattr(item, 'rights'):
         for part in item.rights:
-            if part.pos_ in BREAKER_POS or part.i in visited:
+            if part.pos_ in BREAKER_POS and part.dep_ not in SPECIAL_VERB_DEPS or part.i in visited:
                 break
             if not part.lower_ in NEGATIONS:
                 if hasattr(part, 'lefts'):
@@ -318,7 +311,7 @@ def passive_expand(item, tokens, visited):
 
     if hasattr(item, 'lefts'):
         for part in item.lefts:
-            if part.pos_ in BREAKER_POS:
+            if part.pos_ in BREAKER_POS and part.dep_ not in SPECIAL_VERB_DEPS:
                 break
             if not part.lower_ in NEGATIONS:
                 parts.append(part)
@@ -327,7 +320,7 @@ def passive_expand(item, tokens, visited):
 
     if hasattr(item, 'rights'):
         for part in item.rights:
-            if part.pos_ in BREAKER_POS:
+            if part.pos_ in BREAKER_POS and part.dep_ not in SPECIAL_VERB_DEPS:
                 break
             if not part.lower_ in NEGATIONS:
                 parts.append(part)
@@ -434,7 +427,7 @@ def get_subject(item, tokens, visited):
 
     if hasattr(item, 'lefts'):
         for part in item.lefts:
-            if part.pos_ in BREAKER_POS:
+            if part.pos_ in BREAKER_POS and part.dep_ not in SPECIAL_VERB_DEPS:
                 break
             if not part.lower_ in NEGATIONS:
                 if hasattr(part, 'lefts'):
@@ -464,9 +457,14 @@ def get_modifier(item, tokens, visited):
 
     if hasattr(item, 'rights'):
         for part in item.rights:
-            if part.pos_ in BREAKER_POS:
+            if part.pos_ in BREAKER_POS and part.dep_ not in SPECIAL_VERB_DEPS:
                 break
             if not part.lower_ in NEGATIONS:
+                if hasattr(part, 'lefts'):
+                    for item2 in part.lefts:
+                        if item2.i not in visited:
+                            visited.add(item2.i)
+                            parts.extend(expand(item2, tokens, visited))
                 parts.append(part)
                 if hasattr(part, 'rights'):
                     for item2 in part.rights:
@@ -533,6 +531,14 @@ def _get_mods_from_clauses(deps, tokens, visited):
     return mods
 
 
+def _get_mods_from_inf(deps, tokens, visited):
+    mods = []
+    for dep in deps:
+        if dep.pos_ == "VERB" and dep.dep_ == "advcl":
+            mods.extend(expand(dep, tokens, visited))
+    return mods
+
+
 # find subjects and their modifiers to create SMs
 def findVMs(tokens):
     vms = []
@@ -540,12 +546,15 @@ def findVMs(tokens):
     for v in verbs:
         visited = set()
         advmod = _get_verb_advmod(v)
-        mods = _get_mods_from_prepositions(v.rights, tokens, visited)
-        _mods = _get_mods_from_clauses(v.rights, tokens, visited)
-        if len(mods) > 0:
-            vms.append((v.lower_ + advmod, to_str(mods)))
-        elif len(_mods) > 0:
-            vms.append((v.lower_ + advmod, to_str(_mods)))
+        p_mods = _get_mods_from_prepositions(v.rights, tokens, visited)
+        c_mods = _get_mods_from_clauses(v.rights, tokens, visited)
+        i_mods = _get_mods_from_inf(v.rights, tokens, visited)
+        if len(p_mods) > 0:
+            vms.append((v.lower_ + advmod, to_str(p_mods)))
+        elif len(c_mods) > 0:
+            vms.append((v.lower_ + advmod, to_str(c_mods)))
+        elif len(i_mods) > 0:
+            vms.append((v.lower_ + advmod, to_str(i_mods)))
         else:
             vms.append((v.lower_ + advmod, ''))
 
