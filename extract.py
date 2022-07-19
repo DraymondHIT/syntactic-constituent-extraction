@@ -169,7 +169,8 @@ def _find_verbs(tokens):
 
 # is the token a verb?  (excluding auxiliary verbs)
 def _is_non_aux_verb(tok):
-    return (tok.pos_ == "VERB" or tok.pos_ == "AUX") and (tok.dep_ != "aux" and tok.dep_ != "auxpass" and tok.dep_ not in SPECIAL_VERB_DEPS and tok.dep_ != "advcl")
+    return (tok.pos_ == "VERB" or tok.pos_ == "AUX") and (
+                tok.dep_ != "aux" and tok.dep_ != "auxpass" and tok.dep_ not in SPECIAL_VERB_DEPS and tok.dep_ != "advcl")
 
 
 # is the token a verb?  (excluding auxiliary verbs)
@@ -200,8 +201,8 @@ def _get_all_objs(v, is_pas):
     objs = [tok for tok in rights if tok.dep_ in OBJECTS or (is_pas and tok.dep_ == 'pobj')]
     objs.extend(_get_objs_from_prepositions(rights, is_pas))
 
-    #potentialNewVerb, potentialNewObjs = _get_objs_from_attrs(rights)
-    #if potentialNewVerb is not None and potentialNewObjs is not None and len(potentialNewObjs) > 0:
+    # potentialNewVerb, potentialNewObjs = _get_objs_from_attrs(rights)
+    # if potentialNewVerb is not None and potentialNewObjs is not None and len(potentialNewObjs) > 0:
     #    objs.extend(potentialNewObjs)
     #    v = potentialNewVerb
 
@@ -249,7 +250,8 @@ def _get_lemma(word: str):
 # print information for displaying all kinds of things of the parse tree
 def printDeps(toks):
     for tok in toks:
-        print(tok.orth_, tok.dep_, tok.pos_, tok.head.orth_, [t.orth_ for t in tok.lefts], [t.orth_ for t in tok.rights])
+        print(tok.orth_, tok.dep_, tok.pos_, tok.head.orth_, [t.orth_ for t in tok.lefts],
+              [t.orth_ for t in tok.rights])
 
 
 # expand an obj / subj np using its chunk
@@ -352,7 +354,8 @@ def _get_verb_advmod(item):
 
 
 def _process_relative_word_and_pron(item, visited, coref=None):
-    if item.lemma_ in RELATIVE_WORDS and (item.dep_ == "nsubjpass" or item.dep_ == "nsubj") and item.head.dep_ == "relcl":
+    if item.lemma_ in RELATIVE_WORDS and (
+            item.dep_ == "nsubjpass" or item.dep_ == "nsubj") and item.head.dep_ == "relcl":
         visited.add(item.i)
         visited.add(item.head.i)
         item = item.head.head
@@ -387,14 +390,18 @@ def findSVOs(tokens, coref=None):
                             obj, visited = _process_relative_word_and_pron(obj, visited, coref)
                             if is_pas:  # reverse object / subject for passive
                                 svos.append((to_str(passive_expand(obj, tokens, visited)),
-                                             "!" + v.lemma_ + advmod if verbNegated or objNegated else v.lemma_ + advmod, to_str(passive_expand(sub, tokens, visited))))
+                                             "!" + v.lemma_ + advmod if verbNegated or objNegated else v.lemma_ + advmod,
+                                             to_str(passive_expand(sub, tokens, visited))))
                                 svos.append((to_str(passive_expand(obj, tokens, visited)),
-                                             "!" + v2.lemma_ + advmod2 if verbNegated or objNegated else v2.lemma_ + advmod2, to_str(passive_expand(sub, tokens, visited))))
+                                             "!" + v2.lemma_ + advmod2 if verbNegated or objNegated else v2.lemma_ + advmod2,
+                                             to_str(passive_expand(sub, tokens, visited))))
                             else:
                                 svos.append((to_str(expand(sub, tokens, visited)),
-                                             "!" + v.lower_ + advmod if verbNegated or objNegated else v.lower_ + advmod, to_str(expand(obj, tokens, visited))))
+                                             "!" + v.lower_ + advmod if verbNegated or objNegated else v.lower_ + advmod,
+                                             to_str(expand(obj, tokens, visited))))
                                 svos.append((to_str(expand(sub, tokens, visited)),
-                                             "!" + v2.lower_ + advmod2 if verbNegated or objNegated else v2.lower_ + advmod2, to_str(expand(obj, tokens, visited))))
+                                             "!" + v2.lower_ + advmod2 if verbNegated or objNegated else v2.lower_ + advmod2,
+                                             to_str(expand(obj, tokens, visited))))
                     else:
                         svos.append((to_str(expand(sub, tokens, visited)),
                                      "!" + v.lower_ + advmod if verbNegated else v.lower_ + advmod,))
@@ -410,10 +417,12 @@ def findSVOs(tokens, coref=None):
                             obj, visited = _process_relative_word_and_pron(obj, visited, coref)
                             if is_pas:  # reverse object / subject for passive
                                 svos.append((to_str(passive_expand(obj, tokens, visited)),
-                                             "!" + v.lemma_ + advmod if verbNegated or objNegated else v.lemma_ + advmod, to_str(passive_expand(sub, tokens, visited))))
+                                             "!" + v.lemma_ + advmod if verbNegated or objNegated else v.lemma_ + advmod,
+                                             to_str(passive_expand(sub, tokens, visited))))
                             else:
                                 svos.append((to_str(expand(sub, tokens, visited)),
-                                             "!" + v.lower_ + advmod if verbNegated or objNegated else v.lower_ + advmod, to_str(expand(obj, tokens, visited))))
+                                             "!" + v.lower_ + advmod if verbNegated or objNegated else v.lower_ + advmod,
+                                             to_str(expand(obj, tokens, visited))))
                     else:
                         # no obj - just return the SV parts
                         svos.append((to_str(expand(sub, tokens, visited)),
@@ -505,7 +514,8 @@ def findSMs(tokens, coref=None):
                     if len(objs) > 0:
                         for obj in objs:
                             obj, visited = _process_relative_word_and_pron(obj, visited, coref)
-                            sms.add((to_str(get_subject(obj, tokens, visited)), to_str(get_modifier(obj, tokens, visited))))
+                            sms.add(
+                                (to_str(get_subject(obj, tokens, visited)), to_str(get_modifier(obj, tokens, visited))))
                 else:
                     for sub in subs:
                         sub, visited = _process_relative_word_and_pron(sub, visited, coref)
@@ -514,29 +524,56 @@ def findSMs(tokens, coref=None):
     return list(sms)
 
 
+def _split_mods(mods):
+    split_mods = []
+    for mod in mods:
+        split_mod = []
+        for token in mod:
+            if (token.pos_ == "ADP" and token.dep_ == "prep") or \
+                    (token.pos_ == "SCONJ" and (token.lower_ == 'that' or token.lower_ == 'if')) or \
+                    (token.head.pos_ == "VERB" and token.head.dep_ == "advcl"):
+                if len(split_mod) > 0:
+                    split_mods.append(split_mod)
+                split_mod = [token]
+            else:
+                split_mod.append(token)
+        if len(split_mod) > 0:
+            split_mods.append(split_mod)
+    return split_mods
+
+
 def _get_mods_from_prepositions(deps, tokens, visited):
-    mods = []
+    _mods = []
     for dep in deps:
+        mods = []
         if dep.pos_ == "ADP" and dep.dep_ == "prep":
             mods.extend(expand(dep, tokens, visited))
-    return mods
+        if len(mods) > 0:
+            _mods.append(mods)
+    return _split_mods(_mods)
 
 
 def _get_mods_from_clauses(deps, tokens, visited):
-    mods = []
+    _mods = []
     for dep in deps:
+        mods = []
         for item in dep.lefts:
             if item.pos_ == "SCONJ" and (item.lower_ == 'that' or item.lower_ == 'if'):
                 mods.extend(expand(dep, tokens, visited))
-    return mods
+        if len(mods) > 0:
+            _mods.append(mods)
+    return _split_mods(_mods)
 
 
 def _get_mods_from_inf(deps, tokens, visited):
-    mods = []
+    _mods = []
     for dep in deps:
+        mods = []
         if dep.pos_ == "VERB" and dep.dep_ == "advcl":
             mods.extend(expand(dep, tokens, visited))
-    return mods
+        if len(mods) > 0:
+            _mods.append(mods)
+    return _split_mods(_mods)
 
 
 # find subjects and their modifiers to create SMs
@@ -546,15 +583,15 @@ def findVMs(tokens):
     for v in verbs:
         visited = set()
         advmod = _get_verb_advmod(v)
-        p_mods = _get_mods_from_prepositions(v.rights, tokens, visited)
-        c_mods = _get_mods_from_clauses(v.rights, tokens, visited)
-        i_mods = _get_mods_from_inf(v.rights, tokens, visited)
+        p_mods = _get_mods_from_prepositions(list(v.lefts) + list(v.rights), tokens, visited)
+        c_mods = _get_mods_from_clauses(list(v.rights), tokens, visited)
+        i_mods = _get_mods_from_inf(list(v.lefts) + list(v.rights), tokens, visited)
         if len(p_mods) > 0:
-            vms.append((v.lower_ + advmod, to_str(p_mods)))
+            vms.append((v.lower_ + advmod, [to_str(p_mod) for p_mod in p_mods]))
         elif len(c_mods) > 0:
-            vms.append((v.lower_ + advmod, to_str(c_mods)))
+            vms.append((v.lower_ + advmod, [to_str(c_mod) for c_mod in c_mods]))
         elif len(i_mods) > 0:
-            vms.append((v.lower_ + advmod, to_str(i_mods)))
+            vms.append((v.lower_ + advmod, [to_str(i_mod) for i_mod in i_mods]))
         else:
             vms.append((v.lower_ + advmod, ''))
 
