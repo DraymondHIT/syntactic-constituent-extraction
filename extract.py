@@ -31,6 +31,10 @@ NEGATIONS = {"no", "not", "n't", "never", "none"}
 AUX = {"be", "is", "was", "are", "were"}
 # relative word
 RELATIVE_WORDS = {"which", "that"}
+# conjunction
+CONJUNCTIONS = {"that", "if", "while"}
+# location preposition word
+LOCATION_PREPOSITIONS = {"in", "on", "at"}
 # special verb dependencies
 SPECIAL_VERB_DEPS = {"amod", "acl"}
 
@@ -524,56 +528,46 @@ def findSMs(tokens, coref=None):
     return list(sms)
 
 
-def _split_mods(mods):
+def _split_mods(tokens):
     split_mods = []
-    for mod in mods:
-        split_mod = []
-        for token in mod:
-            if (token.pos_ == "ADP" and token.dep_ == "prep") or \
-                    (token.pos_ == "SCONJ" and (token.lower_ == 'that' or token.lower_ == 'if')) or \
-                    (token.head.pos_ == "VERB" and token.head.dep_ == "advcl"):
-                if len(split_mod) > 0:
-                    split_mods.append(split_mod)
-                split_mod = [token]
-            else:
-                split_mod.append(token)
-        if len(split_mod) > 0:
-            split_mods.append(split_mod)
+    split_mod = []
+    for token in tokens:
+        if (token.pos_ == "ADP" and token.dep_ == "prep" and token.lower_ in LOCATION_PREPOSITIONS) or \
+                (token.pos_ == "SCONJ" and token.lower_ in CONJUNCTIONS) or \
+                (token.head.pos_ == "VERB" and token.head.dep_ == "advcl" and token.lower_ == 'to'):
+            if len(split_mod) > 0:
+                split_mods.append(split_mod)
+            split_mod = [token]
+        else:
+            split_mod.append(token)
+    if len(split_mod) > 0:
+        split_mods.append(split_mod)
     return split_mods
 
 
 def _get_mods_from_prepositions(deps, tokens, visited):
-    _mods = []
+    mods = []
     for dep in deps:
-        mods = []
         if dep.pos_ == "ADP" and dep.dep_ == "prep":
             mods.extend(expand(dep, tokens, visited))
-        if len(mods) > 0:
-            _mods.append(mods)
-    return _split_mods(_mods)
+    return _split_mods(mods)
 
 
 def _get_mods_from_clauses(deps, tokens, visited):
-    _mods = []
+    mods = []
     for dep in deps:
-        mods = []
         for item in dep.lefts:
             if item.pos_ == "SCONJ" and (item.lower_ == 'that' or item.lower_ == 'if'):
                 mods.extend(expand(dep, tokens, visited))
-        if len(mods) > 0:
-            _mods.append(mods)
-    return _split_mods(_mods)
+    return _split_mods(mods)
 
 
 def _get_mods_from_inf(deps, tokens, visited):
-    _mods = []
+    mods = []
     for dep in deps:
-        mods = []
         if dep.pos_ == "VERB" and dep.dep_ == "advcl":
             mods.extend(expand(dep, tokens, visited))
-        if len(mods) > 0:
-            _mods.append(mods)
-    return _split_mods(_mods)
+    return _split_mods(mods)
 
 
 # find subjects and their modifiers to create SMs
@@ -584,7 +578,7 @@ def findVMs(tokens):
         visited = set()
         advmod = _get_verb_advmod(v)
         p_mods = _get_mods_from_prepositions(list(v.lefts) + list(v.rights), tokens, visited)
-        c_mods = _get_mods_from_clauses(list(v.rights), tokens, visited)
+        c_mods = _get_mods_from_clauses(list(v.lefts) + list(v.rights), tokens, visited)
         i_mods = _get_mods_from_inf(list(v.lefts) + list(v.rights), tokens, visited)
         if len(p_mods) > 0:
             vms.append((v.lower_ + advmod, [to_str(p_mod) for p_mod in p_mods]))
