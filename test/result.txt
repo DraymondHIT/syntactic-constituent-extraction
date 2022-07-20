@@ -1,0 +1,174 @@
+=========0=========
+text: Super Bowl 50 was an American football game to determine the champion of the National Football League (NFL) for the 2015 season.
+SVO:  [('Super Bowl', 'was', 'an American football game'), ('an American football game', 'to determine', 'the champion of the National Football League ( NFL ) for the 2015 season')]
+SM:   [('Super Bowl', '50'), ('an American football game', '')]
+VM:   [('was', ''), ('to determine', '')]
+CE:   None
+=========1=========
+text: The Broncos took an early lead in Super Bowl 50 and never trailed.
+SVO:  [('The Broncos', 'took', 'an early lead in Super Bowl 50'), ('The Broncos', 'trailed')]
+SM:   [('The Broncos', '')]
+VM:   [('took', ''), ('trailed', '')]
+CE:   None
+=========2=========
+text: For the third straight season, the number one seeds from both conferences met in the Super Bowl.
+SVO:  [('the number seeds', 'met')]
+SM:   [('the number seeds', 'from both conferences')]
+VM:   [('met', ['For the third straight season', 'in the Super Bowl'])]
+CE:   {'cause': ['the third straight season'], 'effect': ['the number one seeds from both conferences met in the Super Bowl']}
+=========3=========
+text: The Panthers defense gave up just 308 points, ranking sixth in the league, while also leading the NFL in interceptions with 24 and boasting four Pro Bowl selections.
+SVO:  [('The Panthers defense', 'gave up', 'just 308 points ,'), ('The Panthers defense', 'boasting', 'four Pro Bowl selections')]
+SM:   [('The Panthers defense', '')]
+VM:   [('gave up', ['ranking sixth', 'in the league', 'while also leading the NFL', 'in interceptions with 24 and']), ('boasting', '')]
+CE:   None
+=========4=========
+text: A problem is regarded as inherently difficult if its solution requires significant resources, whatever the algorithm used.
+SVO:  [('A problem', 'is regarded as'), ('the algorithm', 'used')]
+SM:   [('the algorithm', ''), ('A problem', '')]
+VM:   [('is regarded as', ['if its solution requires significant resources , whatever the algorithm used']), ('used', '')]
+CE:   {'cause': ['its solution requires significant resources', 'the algorithm'], 'effect': ['A problem is regarded as inherently difficult']}
+=========5=========
+text: A computational problem can be viewed as an infinite collection of instances together with a solution for every instance.
+SVO:  [('A computational problem', 'be viewed as', 'an infinite collection of instances')]
+SM:   [('A computational problem', '')]
+VM:   [('be viewed as', ['together with a solution for every instance'])]
+CE:   None
+=========6=========
+text: For this reason, complexity theory addresses computational problems and problem instances.
+SVO:  [('complexity theory', 'addresses', 'computational problems and problem instances instances')]
+SM:   [('complexity theory', '')]
+VM:   [('addresses', ['For this reason'])]
+CE:   {'cause': ['complexity theory'], 'effect': ['addresses computational problems', 'problem instances']}
+=========7=========
+text: The fight scene finale between Sharon and the character played by Ali Larter, from the movie, won the 2010 MTV Movie Award for Best Fight.
+SVO:  [('The fight scene finale', 'won', 'the 2010 MTV Movie Award for Best Fight')]
+SM:   [('The fight scene finale', 'between Sharon and the character played by Ali Larter , from the movie')]
+VM:   [('won', '')]
+CE:   None
+=========8=========
+text: A Pharmacy Technician in the UK is considered as a health care professional and often does not work under the direct supervision of a pharmacist (if employed in a hospital pharmacy) but instead is supervised and managed by other senior pharmacy technicians.
+SVO:  [('A Pharmacy Technician', 'is considered as', 'professional a health care'), ('A Pharmacy Technician', 'not work'), ('A Pharmacy Technician', 'supervised', 'other senior pharmacy technicians'), ('A Pharmacy Technician', 'managed by', 'other senior pharmacy technicians'), ('A Pharmacy Technician', 'managed by', 'other senior pharmacy technicians')]
+SM:   [('A Pharmacy Technician', 'in the UK')]
+VM:   [('is considered as', ''), ('not work', ['under the direct supervision of a pharmacist (']), ('supervised', ''), ('managed by', '')]
+CE:   {'cause': ['the UK', 'managed by other senior pharmacy technicians'], 'effect': ['A Pharmacy Technician in is health care does not work under the direct supervision of a pharmacist', 'is supervised']}
+=========9=========
+text: In the Imperial household, the pharmacist was even ranked above the two personal physicians of the Emperor.
+SVO:  [('the pharmacist', 'ranked')]
+SM:   [('the pharmacist', '')]
+VM:   [('ranked', ['In the Imperial household', 'above the two personal physicians of the Emperor'])]
+CE:   {'cause': ['the Imperial household'], 'effect': ['the pharmacist was even ranked above the two personal physicians of the Emperor']}
+=========10=========
+text: The British Empire established the East Africa Protectorate in 1895, which starting in 1920 gave way to the Kenya Colony.
+SVO:  [('The British Empire', 'established', 'the East Africa Protectorate'), ('The British Empire', 'gave way to', 'the Kenya Colony')]
+SM:   [('The British Empire', '')]
+VM:   [('established', ['in 1895']), ('gave way to', '')]
+CE:   None
+=========11=========
+text: The New York Amsterdam News, based in Harlem, is one of the leading African American weekly newspapers in the United States.
+SVO:  [('The York Amsterdam News', 'is', 'one of the leading African American weekly newspapers in the United States')]
+SM:   [('The York Amsterdam News', ', based in Harlem ,')]
+VM:   [('is', '')]
+CE:   None
+=========12=========
+text: Manhattan is a world center for training and education in medicine and the life sciences.
+SVO:  [('Manhattan', 'is', 'a world center for training and education in medicine and the life sciences')]
+SM:   [('Manhattan', '')]
+VM:   [('is', '')]
+CE:   None
+=========13=========
+text: Fossils found in Kenya suggest that primates roamed the area more than 20 million years ago.
+SVO:  [('Fossils', 'suggest')]
+SM:   [('Fossils', 'found in Kenya')]
+VM:   [('suggest', ['that primates roamed the area more than 20 million years ago'])]
+CE:   None
+=========14=========
+text: The cat loves the mouse that is delicious.
+SVO:  [('The cat', 'loves', 'the mouse that is delicious'), ('the mouse', 'is', 'delicious')]
+SM:   [('the mouse', 'is delicious'), ('The cat', '')]
+VM:   [('loves', ''), ('is', '')]
+CE:   None
+=========15=========
+text: The number of chloroplasts per cell varies from 1 in algae up to 100 in plants like Arabidopsis and wheat.
+SVO:  [('The number', 'varies from', '1 up to 100 in plants like Arabidopsis and wheat')]
+SM:   [('The number', 'of chloroplasts per cell')]
+VM:   [('varies from', ['in algae'])]
+CE:   None
+=========16=========
+text: They then use the ATP and NADPH to make organic molecules from carbon dioxide in a process known as the Calvin cycle.
+SVO:  [('They', 'use', 'the ATP and NADPH'), ('They', 'to make', 'organic molecules')]
+SM:   [('They', '')]
+VM:   [('use', ''), ('to make', ['from carbon dioxide', 'in a process known as the Calvin cycle'])]
+CE:   {'cause': ['They then use the ATP', 'NADPH'], 'effect': ['to make organic molecules from carbon dioxide']}
+=========17=========
+text: Chloroplasts are highly dynamic, they circulate and move around within plant cells, and occasionally pinch in two to reproduce.
+SVO:  [('Chloroplasts', 'are', 'highly dynamic'), ('Chloroplasts', 'circulate'), ('Chloroplasts', 'move around'), ('Chloroplasts', 'pinch'), ('Chloroplasts', 'to reproduce')]
+SM:   [('Chloroplasts', '')]
+VM:   [('are', ''), ('circulate', ''), ('move around', ['within plant cells']), ('pinch', ''), ('to reproduce', '')]
+CE:   None
+=========18=========
+text: The three sources of European Union law are primary law, secondary law and supplementary law.
+SVO:  [('The three sources', 'are', 'primary law , secondary law and supplementary law')]
+SM:   [('The three sources', 'of European Union law')]
+VM:   [('are', '')]
+CE:   None
+=========19=========
+text: European Union law is a body of treaties and legislation, such as Regulations and Directives, which have direct effect or indirect effect on the laws of European Union member states.
+SVO:  [('Union law', 'is', 'a body of treaties and legislation , such as Regulations and Directives ,'), ('treaties', 'have', 'direct effect or indirect effect on the laws of European Union member states effect')]
+SM:   [('treaties', 'and legislation , such as Regulations and Directives ,'), ('Union law', '')]
+VM:   [('is', ''), ('have', '')]
+CE:   None
+=========20=========
+text: TFEU article 227 contains a further right for citizens to petition the Parliament on issues which affect them.
+SVO:  [('TFEU article', 'contains', 'a further right'), ('issues', 'affect', 'citizens')]
+SM:   [('issues', ''), ('TFEU article', '227')]
+VM:   [('contains', ''), ('affect', '')]
+CE:   None
+=========21=========
+text: If a user signs up, he will receive a confirmation email.
+SVO:  [('a user', 'will receive', 'a confirmation email')]
+SM:   [('a user', '')]
+VM:   [('will receive', ['If a user signs up'])]
+CE:   {'cause': ['a user signs up'], 'effect': ['he will receive a confirmation email']}
+=========22=========
+text: While Islamist political culture itself may not be democratic, Islamists need democratic elections to maintain their legitimacy.
+SVO:  [('Islamist political culture', 'not be', 'democratic'), ('Islamists', 'need', 'democratic elections')]
+SM:   [('Islamist political culture', 'itself'), ('Islamists', '')]
+VM:   [('not be', ''), ('need', ['to maintain their legitimacy'])]
+CE:   {'cause': ['Islamist political culture itself may not be democratic', 'need democratic elections'], 'effect': ['to maintain their legitimacy']}
+=========23=========
+text: The symptoms of inflammation are redness, swelling, heat, and pain, which are caused by blood flow into tissue.
+SVO:  [('The symptoms', 'are', 'redness , swelling , heat , and pain ,'), ('redness', 'are caused by', 'blood flow into tissue')]
+SM:   [('redness', ', swelling , heat , and pain ,'), ('The symptoms', 'of inflammation')]
+VM:   [('are', ''), ('are caused by', '')]
+CE:   {'cause': ['blood flow into tissue'], 'effect': ['The symptoms of inflammation are redness', 'swelling', 'heat pain']}
+=========24=========
+text: However, a distinct lymphocyte-derived molecule has been discovered in primitive jawless vertebrates, such as the lamprey and hagfish.
+SVO:  [('a distinct derived molecule', 'been discovered in', 'primitive jawless vertebrates , such as the lamprey and hagfish')]
+SM:   [('a distinct derived molecule', '')]
+VM:   [('been discovered in', '')]
+CE:   None
+=========25=========
+text: Charles W. Eliot, president 1869-1909, eliminated the favored position of Christianity from the curriculum while opening it to student self-direction.
+SVO:  [('Charles W. Eliot', 'eliminated', 'the favored position of Christianity'), ('Charles W. Eliot', 'student', 'self - direction')]
+SM:   [('Charles W. Eliot', ', president 1869 - 1909 ,')]
+VM:   [('eliminated', ['from the curriculum']), ('student', '')]
+CE:   {'cause': ['Charles W. Eliot president'], 'effect': ['eliminated the favored position of Christianity from the curriculum', 'opening it to student self-direction']}
+=========26=========
+text: Proposals to connect the Cambridge campus with the new Allston campus include new and enlarged bridges, a shuttle service or a tram.
+SVO:  [('Proposals', 'include', 'new and enlarged bridges , a shuttle service or a tram')]
+SM:   [('Proposals', 'to connect the Cambridge campus with the new Allston campus')]
+VM:   [('include', '')]
+CE:   None
+=========27=========
+text: In the early 1950s, student applications declined as a result of increasing crime and poverty in the Hyde Park neighborhood.
+SVO:  [('student applications', 'declined')]
+SM:   [('student applications', '')]
+VM:   [('declined', ['In the early 1950s as a result of increasing crime and poverty', 'in the Hyde Park neighborhood'])]
+CE:   {'cause': ['the early 1950s increasing crime', 'poverty in the Hyde Park neighborhood'], 'effect': ['student applications declined']}
+=========28=========
+text: On November 22 , 2010 , the couple married in a secret ceremony at their Los Angeles home.
+SVO:  [('the couple', 'married')]
+SM:   [('the couple', '')]
+VM:   [('married', ['On November 22 , 2010', 'in a secret ceremony', 'at their Los Angeles home'])]
+CE:   {'cause': ['November 22 2010 their Los Angeles home'], 'effect': ['the couple married in a secret ceremony']}

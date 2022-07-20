@@ -1,6 +1,7 @@
 # syntactic-constituent-extraction
 
 - Extract (subject, verb, object) , (subject, mod) and (verb, mod) relations from a sentence using Spacy.
+- Substitute some pronouns by coreference resolution using [longformer_coreference_ontonotes](https://huggingface.co/shtoshni/longformer_coreference_ontonotes).
 - Detect and extract (if exists) cause-and-effect relationship from a sentence using  [CiRA](https://github.com/fischJan/CiRA) and [Multilabel Model](https://zenodo.org/record/5550387#.YtQElnZBxPZ).
 
 ## Installation
@@ -20,6 +21,12 @@ For  [CiRA](https://github.com/fischJan/CiRA), the authors did not supply model 
 
 ```bash
 gdown --id 1NizNkSdah8Jcs8wtDTD5dEnxUWrCP4Zi -O roberta_dropout_linear_layer_multilabel.ckpt
+```
+
+For [longformer_coreference_ontonotes](https://huggingface.co/shtoshni/longformer_coreference_ontonotes), you can download parameters by run
+
+```bash
+gdown --id 1CQxUq2zvCHc1mJUEZ_Zy6WSJQqFz76Pw
 ```
 
 After that, you can also put the parameters under the same directory.
@@ -42,9 +49,9 @@ Outputs includes the original sentence, a list of SVO tuples, a list of SM tuple
 
 ```
 text: If a user signs up, he will receive a confirmation email.
-SVO:  [('a user', 'receive', 'a confirmation email')]
+SVO:  [('a user', 'will receive', 'a confirmation email')]
 SM:   [('a user', '')]
-VM:   [('receive', '')]
+VM:   [('will receive', ['If a user signs up'])]
 CE:   {'cause': ['a user signs up'], 'effect': ['he will receive a confirmation email']}
 ```
 
