@@ -1,7 +1,6 @@
 from extract import findSVOs, findSMs, findVMs, nlp
 from coref import coref_chains
 from causal_extractor import cause_effect_extraction
-# from question_generator import generate
 
 
 class pipeline:
@@ -13,10 +12,6 @@ class pipeline:
         self.sms = findSMs(tokens, self.doc)
         self.vms = findVMs(tokens)
         self.ce = cause_effect_extraction(text)
-
-    def question_answer_generation(self):
-        # generate(self.text, self.svos, self.sms, self.vms, self.ce)
-        pass
 
     def __str__(self):
         return f"text: {self.text}\n" + f"SVO:  {self.svos}\n" + f"SM:   {self.sms}\n" + f"VM:   {self.vms}\n" + f"CE:   {self.ce}"
